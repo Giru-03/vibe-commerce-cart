@@ -19,6 +19,13 @@ A modern, full-stack e-commerce shopping cart application built with React, Node
 - **Error Handling**: Comprehensive error management with user-friendly messages
 - **CORS Support**: Configured for frontend-backend communication
 
+## ScreenShots
+
+![Application Screenshot](sitepic/image.png)
+![Application Screenshot](sitepic/image%20copy.png)
+![Application Screenshot](sitepic/image%20copy%202.png)
+![Application Screenshot](sitepic/image%20copy%203.png)
+
 ## 🛠 Technology Stack
 
 ### Backend
