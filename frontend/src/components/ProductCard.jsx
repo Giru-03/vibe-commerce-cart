@@ -102,20 +102,20 @@ const fetchQuantity = useCallback((signal) => {
 
   return (
     <div className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-[90%] border border-gray-100">
-      <div className="relative w-full aspect-square overflow-hidden bg-linear-to-br from-gray-50 to-gray-100 group flex justify-center items-center">
+      <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 group flex justify-center items-center">
         <img
           src={product.image}
           alt={product.name}
           className="w-[65%] object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
         />
-        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
 
       
       <div className="p-5 flex flex-col grow">
         <h3 className="font-bold text-sm sm:text-lg text-gray-900 mb-2 line-clamp-2 min-h-14">{product.name}</h3>
         <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-md sm:text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <span className="text-md sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             ₹{product.price.toFixed(2)}
           </span>
         </div>
@@ -123,7 +123,7 @@ const fetchQuantity = useCallback((signal) => {
         <div className="mt-auto">
           {qty > 0 ? (
             <div className="space-y-3">
-              <div className="flex items-center justify-between gap-3 bg-linear-to-r from-gray-50 to-gray-100 rounded-xl p-2 sm:p-3">
+              <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-2 sm:p-3">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setQuantity(Math.max(0, qty - 1))}
@@ -136,7 +136,7 @@ const fetchQuantity = useCallback((signal) => {
                   <div className="px-2 sm:px-4 py-1 font-bold text-md sm:text-xl text-gray-900 min-w-4 sm:min-w-12 text-center">{qty}</div>
                <button
                     onClick={() => setQuantity(qty + 1)}
-className="w-5 sm:w-9 h-5 sm:h-9 flex items-center justify-center bg-white rounded-full shadow-md hover:shadow-lg hover:scale-110 disabled:opacity-40 disabled:hover:scale-100 transition-all duration-200 text-gray-700"
+                    className="w-5 sm:w-9 h-5 sm:h-9 flex items-center justify-center bg-white rounded-full shadow-md hover:shadow-lg hover:scale-110 disabled:opacity-40 disabled:hover:scale-100 transition-all duration-200 text-gray-700"
                     aria-label="Increase quantity"
                     disabled={isUpdating}
                   >
@@ -156,7 +156,7 @@ className="w-5 sm:w-9 h-5 sm:h-9 flex items-center justify-center bg-white round
           ) : (
             <button
               onClick={addOne}
-              className="w-full bg-linear-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 active:scale-95 transition-all duration-200 shadow-md hover:shadow-xl disabled:opacity-50 disabled:hover:scale-100"
+              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 active:scale-95 transition-all duration-200 shadow-md hover:shadow-xl disabled:opacity-50 disabled:hover:scale-100"
               disabled={isUpdating}
             >
               <FiShoppingCart className="w-3 sm:w-5 h-3 sm:h-5" />

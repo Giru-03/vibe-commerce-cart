@@ -131,7 +131,7 @@ export default function CartPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
       <header className="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-10 border-b border-gray-200">
         <div className="max-w-6xl mx-auto px-4 py-5 flex justify-between items-center">
           <div className="flex items-center gap-6">
@@ -143,7 +143,7 @@ export default function CartPage() {
             </Link>
             <UserSwitcher />
           </div>
-          <h1 className="text-lg md:text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-lg md:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Your Cart
           </h1>
         </div>
@@ -154,14 +154,14 @@ export default function CartPage() {
           <LoadingSpinner />
         ) : !cart || cart.items.length === 0 ? (
           <div className="text-center py-20 bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl">
-            <div className="w-32 h-32 bg-linear-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div className="w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
               <FiShoppingCart className="w-16 h-16 text-gray-400" />
             </div>
             <h2 className="text-2xl font-bold text-gray-800 mb-3">Your cart is empty</h2>
             <p className="text-gray-500 mb-8">Add some products to get started!</p>
             <Link
               to="/"
-              className="inline-block bg-linear-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
+              className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
             >
               Continue Shopping
             </Link>
@@ -178,10 +178,10 @@ export default function CartPage() {
             </div>
 
             {/* CHECKOUT COLUMN */}
-            <div className="p-6 lg:p-8 border-t-2 lg:border-t-0 lg:border-l-2 border-gray-200 bg-linear-to-br from-blue-50 to-purple-50 min-w-[320px]">
+            <div className="p-6 lg:p-8 border-t-2 lg:border-t-0 lg:border-l-2 border-gray-200 bg-gradient-to-br from-blue-50 to-purple-50 min-w-[320px]">
               <div className="pb-6 flex justify-between items-center w-full">
                 <span className="text-2xl sm:text-3xl font-bold text-gray-800">Total</span>
-                <span className="text-2xl sm:text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                   ₹{cart.total.toFixed(2)}
                 </span>
               </div>

@@ -89,7 +89,7 @@ export default function Home() {
   if (isLoading) return <LoadingSpinner />;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
 
       <header className="bg-white/80 backdrop-blur-md shadow-lg sticky top-0 z-10 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex justify-between items-center">
@@ -144,6 +144,7 @@ export default function Home() {
             </g>
           </svg>
 
+
           <div className="flex items-center gap-6">
             <UserSwitcher />
             <Link
@@ -152,7 +153,7 @@ export default function Home() {
             >
               <FiShoppingCart className="w-7 h-7" />
               {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-linear-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg animate-bounce">
+                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg animate-bounce">
                   {cartCount}
                 </span>
               )}

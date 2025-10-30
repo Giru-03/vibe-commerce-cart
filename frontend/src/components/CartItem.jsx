@@ -54,12 +54,12 @@ export default function CartItem({ item, onUpdate }) {
 
       <div className="flex justify-center sm:justify-end items-center gap-4 sm:gap-6 shrink-0 w-full">
         <div className="text-right">
-          <p className="font-bold text-lg sm:text-2xl bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <p className="font-bold text-lg sm:text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             ₹{(item.productId.price * item.quantity).toFixed(2)}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-linear-to-r from-gray-50 to-gray-100 rounded-full px-2 py-1 sm:px-3 sm:py-2 shadow-sm">
+        <div className="flex items-center gap-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded-full px-2 py-1 sm:px-3 sm:py-2 shadow-sm">
           <button
             onClick={() => setQuantity(Math.max(0, item.quantity - 1))}
             className="w-4 h-4 sm:w-8 sm:h-8 flex items-center justify-center bg-white rounded-full shadow hover:shadow-md hover:scale-110 disabled:opacity-40 disabled:hover:scale-100 transition-all duration-200"
