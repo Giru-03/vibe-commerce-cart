@@ -15,11 +15,5 @@
     { "src": "/api/cart", "dest": "/api/cart.js" },
     { "src": "/api/checkout", "dest": "/api/checkout.js" },
     { "src": "/", "dest": "/api/index.js" }
-  ],
-  "functions": {
-    "api/**/*.js": {
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  }
+  ]
 }
