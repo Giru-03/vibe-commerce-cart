@@ -45,18 +45,20 @@ export default function Home() {
   const fetchProducts = async () => {
     try {
       const res = await api.get('/products');
-      setProducts(res.data);
+      setProducts(res.data || []);
     } catch (err) {
       console.error('Failed to fetch products:', err);
+      setProducts([]);
     }
   };
 
   const fetchCartCount = async () => {
     try {
       const res = await api.get('/cart');
-      setCartCount(res.data.items.length);
+      setCartCount(res.data?.items?.length || 0);
     } catch (err) {
       console.error('Failed to fetch cart count:', err);
+      setCartCount(0);
     }
   };
 
