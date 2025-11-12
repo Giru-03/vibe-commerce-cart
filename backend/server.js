@@ -11,24 +11,19 @@ const User = require('./models/User');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Database connection with caching
-let cached = global._mongoConnection || null;
-
+// Database connection
 async function connectToDatabase() {
-  if (cached) return cached;
-
-  // Accept either MONGO_URI (preferred) or MONGODB_URI (existing .env uses this)
   const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
   if (!uri) throw new Error('MONGO_URI or MONGODB_URI environment variable is not set');
   if (!process.env.MONGO_URI && process.env.MONGODB_URI) {
     console.warn('Using MONGODB_URI environment variable; consider renaming to MONGO_URI for consistency');
   }
+  await mongoose.connect(uri);
+}
 
-  // Connect and cache the connection for reuse across warm invocations
-  const conn = await mongoose.connect(uri);
-  cached = conn;
-  global._mongoConnection = cached;
-  return cached;
+// Helper to get userId from header, body, or query. Defaults to 'guest'.
+function resolveUserId(req) {
+  return req.headers['x-user-id'] || req.body.userId || req.query.userId || 'guest';
 }
 
 // CORS Configuration
@@ -55,14 +50,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-// Ensure preflight requests are handled
 app.options('*', cors(corsOptions));
 app.use(express.json());
-
-// Helper to get userId from header, body, or query. Defaults to 'guest'.
-function resolveUserId(req) {
-  return req.headers['x-user-id'] || req.body.userId || req.query.userId || 'guest';
-}
 
 // Routes
 // GET all products
@@ -286,27 +275,12 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: err.message || 'Internal Server Error' });
 });
 
-// For Vercel serverless functions
-if (process.env.VERCEL) {
-  module.exports = async (req, res) => {
-    try {
-      await connectToDatabase();
-      return app(req, res);
-    } catch (err) {
-      console.error('API error', err);
-      res.statusCode = err.status || 500;
-      res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify({ error: err.message || 'Internal Server Error' }));
-    }
-  };
-} else {
-  // For local development
-  connectToDatabase()
-    .then(() => {
-      console.log('MongoDB connected');
-      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    })
-    .catch(err => console.error('Failed to connect to MongoDB:', err));
-}
+// Start server for local development
+connectToDatabase()
+  .then(() => {
+    console.log('MongoDB connected');
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch(err => console.error('Failed to connect to MongoDB:', err));
 
 module.exports = app;
