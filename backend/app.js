@@ -7,7 +7,7 @@ const userRoutes = require('./routes/users');
 function createApp() {
   const app = express();
 
-  const frontendOrigin = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const frontendOrigin = process.env.FRONTEND_URL || 'https://vibe-commerce-cart-inky.vercel.app/';
   app.use(cors({
     origin: frontendOrigin,
     credentials: true
