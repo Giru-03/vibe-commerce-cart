@@ -45,7 +45,15 @@ export default function Home() {
   const fetchProducts = async () => {
     try {
       const res = await api.get('/products');
-      setProducts(res.data || []);
+      // Normalize response to an array. Backend should return an array, but
+      // be defensive in case the shape is { products: [...] } or an object.
+      const data = res.data;
+      if (Array.isArray(data)) setProducts(data);
+      else if (data && Array.isArray(data.products)) setProducts(data.products);
+      else {
+        console.warn('Unexpected products response shape, defaulting to empty array', data);
+        setProducts([]);
+      }
     } catch (err) {
       console.error('Failed to fetch products:', err);
       setProducts([]);
