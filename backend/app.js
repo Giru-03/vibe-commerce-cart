@@ -9,7 +9,7 @@ function createApp() {
 
     // Support a comma-separated list of allowed frontend origins via env var.
     // Example: FRONTEND_URLS="https://app.example.com,https://staging.example.com"
-    const rawFrontends = process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:5173';
+    const rawFrontends = 'http://localhost:5173,https://vibe-commerce-cart-inky.vercel.app';
     const allowedOrigins = rawFrontends.split(',').map(s => s.trim()).filter(Boolean);
 
     const corsOptions = {
@@ -17,6 +17,12 @@ function createApp() {
         // allow requests with no origin (e.g., curl, server-to-server)
         if (!origin) return callback(null, true);
         if (allowedOrigins.includes(origin)) return callback(null, true);
+        
+        // For development/testing, also allow vercel.app subdomains
+        if (origin && origin.match(/^https:\/\/.*\.vercel\.app$/)) {
+          return callback(null, true);
+        }
+        
         // not allowed
         return callback(new Error('CORS not allowed'));
       },
