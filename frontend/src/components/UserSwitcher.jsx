@@ -10,7 +10,18 @@ export default function UserSwitcher() {
   const [user, setUser] = useState(() => localStorage.getItem('vibe_user') || 'guest@example.com');
 
   useEffect(() => {
-    api.get('/users').then(res => setUsers(res.data)).catch(() => setUsers([{ name: 'Guest', email: 'guest@example.com' }])).finally(() => setLoading(false));
+    api.get('/users')
+      .then(res => {
+        const data = res.data;
+        if (Array.isArray(data)) setUsers(data);
+        else if (data && Array.isArray(data.users)) setUsers(data.users);
+        else {
+          console.warn('Unexpected users response shape, defaulting to guest', data);
+          setUsers([{ name: 'Guest', email: 'guest@example.com' }]);
+        }
+      })
+      .catch(() => setUsers([{ name: 'Guest', email: 'guest@example.com' }]))
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
