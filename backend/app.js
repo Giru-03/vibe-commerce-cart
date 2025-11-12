@@ -7,11 +7,27 @@ const userRoutes = require('./routes/users');
 function createApp() {
   const app = express();
 
-  const frontendOrigin = process.env.FRONTEND_URL || 'https://vibe-commerce-cart-inky.vercel.app/';
-  app.use(cors({
-    origin: frontendOrigin,
-    credentials: true
-  }));
+    // Support a comma-separated list of allowed frontend origins via env var.
+    // Example: FRONTEND_URLS="https://app.example.com,https://staging.example.com"
+    const rawFrontends = process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 'http://localhost:5173';
+    const allowedOrigins = rawFrontends.split(',').map(s => s.trim()).filter(Boolean);
+
+    const corsOptions = {
+      origin: function(origin, callback) {
+        // allow requests with no origin (e.g., curl, server-to-server)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        // not allowed
+        return callback(new Error('CORS not allowed'));
+      },
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-user-id']
+    };
+
+    app.use(cors(corsOptions));
+    // Ensure preflight requests are handled
+    app.options('*', cors(corsOptions));
 
   app.use(express.json());
 
