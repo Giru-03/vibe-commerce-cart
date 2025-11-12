@@ -1,7 +1,17 @@
 import { FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
-import api from '../api';
+import axios from 'axios';
 import { useNotification } from './NotificationContext';
 import { useState } from 'react';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
+
+const api = axios.create({
+  baseURL: API_BASE_URL
+});
+
+// Set default user header
+api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
 
 export default function CartItem({ item, onUpdate }) {
   const { notify } = useNotification();

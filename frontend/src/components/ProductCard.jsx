@@ -1,8 +1,17 @@
 import { FiShoppingCart, FiPlus, FiMinus, FiTrash2 } from 'react-icons/fi';
-import api from '../api';
-import { useNotification } from './NotificationContext';
 import axios from 'axios';
+import { useNotification } from './NotificationContext';
 import { useEffect, useState, useCallback } from 'react';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
+
+const api = axios.create({
+  baseURL: API_BASE_URL
+});
+
+// Set default user header
+api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
 
 export default function ProductCard({ product, onAdd }) {
   const { notify } = useNotification();
@@ -45,7 +54,14 @@ const fetchQuantity = useCallback((signal) => {
 
   useEffect(() => {
     const controller = new AbortController();
-    const handleUserChange = () => {
+    const handleUserChange = (event) => {
+      const newEmail = event.detail?.user;
+      // Update api headers for the user
+      if (newEmail) {
+        api.defaults.headers.common['x-user-id'] = newEmail;
+      } else {
+        delete api.defaults.headers.common['x-user-id'];
+      }
       fetchQuantity(controller.signal);
     };
 

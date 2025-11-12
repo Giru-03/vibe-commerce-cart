@@ -1,7 +1,17 @@
 import { useState, useEffect } from 'react';
-import api from '../api';
+import axios from 'axios';
 import { useNotification } from './NotificationContext';
 import { FiLoader } from 'react-icons/fi';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
+
+const api = axios.create({
+  baseURL: API_BASE_URL
+});
+
+// Set default user header
+api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
 
 export default function CheckoutForm({ cart, onCheckout, user }) {
   const [form, setForm] = useState({ name: '', email: '' });

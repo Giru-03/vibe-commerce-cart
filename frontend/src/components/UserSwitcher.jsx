@@ -1,13 +1,24 @@
 import { useEffect, useState } from 'react';
-import { setUserId } from '../api';
-import api from '../api';
+import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
+
+const api = axios.create({
+  baseURL: API_BASE_URL
+});
+
+// Helper to change user for testing/multi-user flows
+function setUserId(id) {
+  if (id) api.defaults.headers.common['x-user-id'] = id;
+  else delete api.defaults.headers.common['x-user-id'];
+}
 
 export default function UserSwitcher() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const [user, setUser] = useState(() => localStorage.getItem('vibe_user') || 'guest@example.com');
+  const [user, setUser] = useState(() => localStorage.getItem('vibe_user') || DEFAULT_USER_ID);
 
   useEffect(() => {
     api.get('/users')

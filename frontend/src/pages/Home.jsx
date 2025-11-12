@@ -1,10 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import ProductCard from '../components/ProductCard';
-import api from '../api';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import UserSwitcher from '../components/UserSwitcher';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { FiShoppingCart } from 'react-icons/fi';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
+
+const api = axios.create({
+  baseURL: API_BASE_URL
+});
+
+// Set default user header
+api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
 
 function LazyProductCard({ product, onAdd }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -80,7 +90,16 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const handler = () => fetchCartCount();
+    const handler = (event) => {
+      const newEmail = event.detail?.user;
+      // Update api headers for the user
+      if (newEmail) {
+        api.defaults.headers.common['x-user-id'] = newEmail;
+      } else {
+        delete api.defaults.headers.common['x-user-id'];
+      }
+      fetchCartCount();
+    };
     window.addEventListener('vibe:userChanged', handler);
     return () => window.removeEventListener('vibe:userChanged', handler);
   }, []);

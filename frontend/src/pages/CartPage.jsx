@@ -2,11 +2,21 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import CartItem from '../components/CartItem';
 import CheckoutForm from '../components/CheckoutForm';
 import ReceiptModal from '../components/ReceiptModal';
-import api from '../api';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import UserSwitcher from '../components/UserSwitcher';
 import LoadingSpinner from '../components/LoadingSpinner';
 import { FiArrowLeft, FiShoppingCart } from 'react-icons/fi';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
+
+const api = axios.create({
+  baseURL: API_BASE_URL
+});
+
+// Set default user header
+api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
 
 function LazyCartItem({ item, onUpdate }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -106,8 +116,14 @@ export default function CartPage() {
   // Listen for user change event
   useEffect(() => {
     const handleUserChange = (event) => {
-      fetchCart();
       const newEmail = event.detail.user;
+      // Update api headers for the user
+      if (newEmail) {
+        api.defaults.headers.common['x-user-id'] = newEmail;
+      } else {
+        delete api.defaults.headers.common['x-user-id'];
+      }
+      fetchCart();
       if (newEmail && users.length > 0) {
         const matched = users.find(u => u.email === newEmail);
         const userObj = matched || { name: 'Guest', email: newEmail };

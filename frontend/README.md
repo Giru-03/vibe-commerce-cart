@@ -1,4 +1,36 @@
-# React + Vite
+# Vibe Commerce Cart - Frontend
+
+This is the frontend application for the Vibe Commerce Cart project, built with React + Vite.
+
+## Environment Configuration
+
+The application uses environment variables for backend API configuration. Create a `.env` file in the frontend directory with the following variables:
+
+```
+VITE_API_BASE_URL=http://localhost:3000/api
+VITE_DEFAULT_USER_ID=guest@example.com
+```
+
+Copy `.env.example` to `.env` and modify the values as needed.
+
+## Getting Started
+
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Start the development server:
+```bash
+npm run dev
+```
+
+3. Build for production:
+```bash
+npm run build
+```
+
+## React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
