@@ -1,9 +1,25 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/index.js", "use": "@vercel/node" }
+    { "src": "api/index.js", "use": "@vercel/node" },
+    { "src": "api/products.js", "use": "@vercel/node" },
+    { "src": "api/users.js", "use": "@vercel/node" },
+    { "src": "api/cart.js", "use": "@vercel/node" },
+    { "src": "api/cart/[id].js", "use": "@vercel/node" },
+    { "src": "api/checkout.js", "use": "@vercel/node" }
   ],
   "routes": [
-    { "src": "/(.*)", "dest": "/api/index.js" }
-  ]
+    { "src": "/api/products", "dest": "/api/products.js" },
+    { "src": "/api/users", "dest": "/api/users.js" },
+    { "src": "/api/cart/([^/]+)", "dest": "/api/cart/[id].js?id=$1" },
+    { "src": "/api/cart", "dest": "/api/cart.js" },
+    { "src": "/api/checkout", "dest": "/api/checkout.js" },
+    { "src": "/", "dest": "/api/index.js" }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  }
 }
