@@ -9,14 +9,16 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { FiArrowLeft, FiShoppingCart } from 'react-icons/fi';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
-const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL
 });
 
-// Set default user header
-api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
+// Set user header from localStorage (set by UserSwitcher)
+const storedUser = localStorage.getItem('vibe_user');
+if (storedUser) {
+  api.defaults.headers.common['x-user-id'] = storedUser;
+}
 
 function LazyCartItem({ item, onUpdate }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -90,7 +92,6 @@ export default function CartPage() {
         setUsers(res.data);
       } catch (err) {
         console.error('Failed to fetch users:', err);
-        setUsers([{ name: 'Guest', email: 'guest@example.com' }]);
       } finally {
         setUsersLoading(false);
       }
@@ -98,13 +99,29 @@ export default function CartPage() {
     fetchUsers();
   }, []);
 
+  // Listen for user changes and update header + refetch cart
+  useEffect(() => {
+    const handleUserChange = (event) => {
+      const newUser = event.detail?.user;
+      if (newUser) {
+        api.defaults.headers.common['x-user-id'] = newUser;
+        fetchCart(); // Refetch cart with new user
+      }
+    };
+
+    window.addEventListener('vibe:userChanged', handleUserChange);
+    return () => window.removeEventListener('vibe:userChanged', handleUserChange);
+  }, [fetchCart]);
+
   // Set currentUser from localStorage
   useEffect(() => {
     if (!usersLoading) {
-      const savedEmail = localStorage.getItem('vibe_user') || 'guest@example.com';
-      const matched = users.find(u => u.email === savedEmail);
-      const userObj = matched || { name: 'Guest', email: savedEmail };
-      setCurrentUser(userObj);
+      const savedEmail = localStorage.getItem('vibe_user');
+      if (savedEmail) {
+        const matched = users.find(u => u.email === savedEmail);
+        const userObj = matched;
+        setCurrentUser(userObj);
+      }
     }
   }, [users, usersLoading]);
 
@@ -126,7 +143,7 @@ export default function CartPage() {
       fetchCart();
       if (newEmail && users.length > 0) {
         const matched = users.find(u => u.email === newEmail);
-        const userObj = matched || { name: 'Guest', email: newEmail };
+        const userObj = matched;
         setCurrentUser(userObj);
       }
     };

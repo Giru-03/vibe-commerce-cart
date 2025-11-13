@@ -1,46 +1,61 @@
 import { FiTrash2, FiPlus, FiMinus } from 'react-icons/fi';
 import axios from 'axios';
 import { useNotification } from './NotificationContext';
-import { useState } from 'react';
+import { useState, memo } from 'react';
+import { MiniSpinner } from './MiniSpinner';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
-const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL
 });
 
-// Set default user header
-api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
+// Set user header from localStorage (set by UserSwitcher)
+const storedUser = localStorage.getItem('vibe_user');
+if (storedUser) {
+  api.defaults.headers.common['x-user-id'] = storedUser;
+}
 
-export default function CartItem({ item, onUpdate }) {
+function CartItem({ item, onUpdate }) {
   const { notify } = useNotification();
   const [isUpdating, setIsUpdating] = useState(false);
+  const [operationType, setOperationType] = useState(null); // 'remove', 'decrease', 'increase'
 
   const handleRemove = async () => {
     setIsUpdating(true);
+    setOperationType('remove');
     try {
       await api.delete(`/cart/${item._id}`);
       onUpdate();
+      notify('Item removed from cart', 'info');
     } catch (err) {
       const message = err.response?.data?.error || err.message || 'Error removing item';
       notify(message, 'error');
     } finally {
       setIsUpdating(false);
+      setOperationType(null);
     }
   };
 
   const setQuantity = async (newQty) => {
     setIsUpdating(true);
+    setOperationType(newQty === 0 ? 'remove' : newQty < item.quantity ? 'decrease' : 'increase');
+    
     try {
-      if (newQty <= 0) await api.delete(`/cart/${item._id}`);
-      else await api.put(`/cart/${item._id}`, { quantity: newQty });
+      if (newQty <= 0) {
+        await api.delete(`/cart/${item._id}`);
+        notify('Item removed from cart', 'info');
+      } else {
+        await api.put(`/cart/${item._id}`, { quantity: newQty });
+        notify('Quantity updated', 'success');
+      }
       onUpdate();
     } catch (err) {
       const message = err.response?.data?.error || err.message || 'Error updating quantity';
       notify(message, 'error');
     } finally {
       setIsUpdating(false);
+      setOperationType(null);
     }
   };
 
@@ -76,28 +91,50 @@ export default function CartItem({ item, onUpdate }) {
             disabled={isUpdating}
             aria-label="Decrease quantity"
           >
-            <FiMinus className="w-4 h-4 text-gray-700" />
+            {isUpdating && operationType === 'decrease' ? (
+              <MiniSpinner size="xs" className="text-gray-600" />
+            ) : (
+              <FiMinus className="w-4 h-4 text-gray-700" />
+            )}
           </button>
-          <div className="px-3 font-bold text-md sm:text-lg text-gray-900 min-w-10 text-center">{item.quantity}</div>
+          
+          <div className="px-3 font-bold text-md sm:text-lg text-gray-900 min-w-10 text-center flex items-center justify-center">
+            {isUpdating && (operationType === 'increase' || operationType === 'decrease') ? (
+              <MiniSpinner size="sm" className="text-gray-600" />
+            ) : (
+              item.quantity
+            )}
+          </div>
+          
           <button
             onClick={() => setQuantity(item.quantity + 1)}
             className="w-4 h-4 sm:w-8 sm:h-8 flex items-center justify-center bg-white rounded-full shadow hover:shadow-md hover:scale-110 disabled:opacity-40 disabled:hover:scale-100 transition-all duration-200"
             disabled={isUpdating}
             aria-label="Increase quantity"
           >
-            <FiPlus className="w-4 h-4 text-gray-700" />
+            {isUpdating && operationType === 'increase' ? (
+              <MiniSpinner size="xs" className="text-gray-600" />
+            ) : (
+              <FiPlus className="w-4 h-4 text-gray-700" />
+            )}
           </button>
         </div>
 
         <button
           onClick={handleRemove}
-          className="p-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full disabled:text-gray-300 transition-all duration-200 hover:scale-110"
+          className="p-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full disabled:text-gray-300 transition-all duration-200 hover:scale-110 disabled:hover:scale-100"
           disabled={isUpdating}
           aria-label="Remove item"
         >
-          <FiTrash2 className="w-5 h-5" />
+          {isUpdating && operationType === 'remove' ? (
+            <MiniSpinner size="sm" className="text-red-400" />
+          ) : (
+            <FiTrash2 className="w-5 h-5" />
+          )}
         </button>
       </div>
     </div>
   );
 }
+
+export default memo(CartItem);

@@ -1,17 +1,19 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNotification } from './NotificationContext';
-import { FiLoader } from 'react-icons/fi';
+import { MiniSpinner } from './MiniSpinner';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
-const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL
 });
 
-// Set default user header
-api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
+// Set user header from localStorage (set by UserSwitcher)
+const storedUser = localStorage.getItem('vibe_user');
+if (storedUser) {
+  api.defaults.headers.common['x-user-id'] = storedUser;
+}
 
 export default function CheckoutForm({ cart, onCheckout, user }) {
   const [form, setForm] = useState({ name: '', email: '' });
@@ -79,8 +81,8 @@ export default function CheckoutForm({ cart, onCheckout, user }) {
       >
         {loading ? (
           <>
-            <FiLoader className="animate-spin mr-2 w-5 h-5" />
-            <span>Processing...</span>
+            <MiniSpinner size="md" className="text-white mr-3" />
+            <span>Processing Order...</span>
           </>
         ) : (
           <span>Complete Checkout</span>

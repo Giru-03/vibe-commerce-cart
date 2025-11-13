@@ -2,25 +2,30 @@ import { FiShoppingCart, FiPlus, FiMinus, FiTrash2 } from 'react-icons/fi';
 import axios from 'axios';
 import { useNotification } from './NotificationContext';
 import { useEffect, useState, useCallback } from 'react';
+import { MiniSpinner } from './MiniSpinner';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
-const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL
 });
 
-// Set default user header
-api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
+// Set user header from localStorage (set by UserSwitcher)
+const storedUser = localStorage.getItem('vibe_user');
+if (storedUser) {
+  api.defaults.headers.common['x-user-id'] = storedUser;
+}
 
 export default function ProductCard({ product, onAdd }) {
   const { notify } = useNotification();
   const [qty, setQty] = useState(0);
   const [cartItemId, setCartItemId] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [loadingQuantity, setLoadingQuantity] = useState(true);
 
 const fetchQuantity = useCallback((signal) => {
   (async () => {
+    setLoadingQuantity(true);
     try {
       const res = await api.get('/cart', { signal });
       const items = res.data.items || [];
@@ -40,6 +45,8 @@ const fetchQuantity = useCallback((signal) => {
         return; 
       }
       console.error("Failed to fetch product quantity", err);
+    } finally {
+      setLoadingQuantity(false);
     }
   })();
 }, [product._id]); 
@@ -137,7 +144,11 @@ const fetchQuantity = useCallback((signal) => {
         </div>
 
         <div className="mt-auto">
-          {qty > 0 ? (
+          {loadingQuantity ? (
+            <div className="flex items-center justify-center py-3 bg-gray-100 rounded-xl">
+              <MiniSpinner size="md" className="text-gray-400" />
+            </div>
+          ) : qty > 0 ? (
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-2 sm:p-3">
                 <div className="flex items-center gap-2">
@@ -147,7 +158,11 @@ const fetchQuantity = useCallback((signal) => {
                     aria-label="Decrease quantity"
                     disabled={isUpdating}
                   >
-                    <FiMinus className="w-2 sm:w-4 h-2 sm:h-4" />
+                    {isUpdating ? (
+                      <MiniSpinner size="xs" className="text-gray-600" />
+                    ) : (
+                      <FiMinus className="w-2 sm:w-4 h-2 sm:h-4" />
+                    )}
                   </button>
                   <div className="px-2 sm:px-4 py-1 font-bold text-md sm:text-xl text-gray-900 min-w-4 sm:min-w-12 text-center">{qty}</div>
                <button
@@ -156,7 +171,11 @@ const fetchQuantity = useCallback((signal) => {
                     aria-label="Increase quantity"
                     disabled={isUpdating}
                   >
-                    <FiPlus className="w-2 sm:w-4 h-2 sm:h-4" />
+                    {isUpdating ? (
+                      <MiniSpinner size="xs" className="text-gray-600" />
+                    ) : (
+                      <FiPlus className="w-2 sm:w-4 h-2 sm:h-4" />
+                    )}
                   </button>
                 </div>
                 <button
@@ -165,7 +184,11 @@ const fetchQuantity = useCallback((signal) => {
                   aria-label="Remove item"
                   disabled={isUpdating}
                 >
-                  <FiTrash2 className="w-4 sm:w-5 h-4 sm:h-5" />
+                  {isUpdating ? (
+                    <MiniSpinner size="sm" className="text-red-400" />
+                  ) : (
+                    <FiTrash2 className="w-4 sm:w-5 h-4 sm:h-5" />
+                  )}
                 </button>
               </div>
             </div>
@@ -175,8 +198,17 @@ const fetchQuantity = useCallback((signal) => {
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 active:scale-95 transition-all duration-200 shadow-md hover:shadow-xl disabled:opacity-50 disabled:hover:scale-100"
               disabled={isUpdating}
             >
-              <FiShoppingCart className="w-3 sm:w-5 h-3 sm:h-5" />
-              <span>Add to Cart</span>
+              {isUpdating ? (
+                <>
+                  <MiniSpinner size="sm" className="text-white" />
+                  <span>Adding...</span>
+                </>
+              ) : (
+                <>
+                  <FiShoppingCart className="w-3 sm:w-5 h-3 sm:h-5" />
+                  <span>Add to Cart</span>
+                </>
+              )}
             </button>
           )}
         </div>

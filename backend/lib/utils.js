@@ -16,9 +16,8 @@ async function connectToDatabase() {
   return cached;
 }
 
-// Helper to get userId from header, body, or query. Defaults to 'guest'.
 function resolveUserId(req) {
-  return req.headers['x-user-id'] || req.body.userId || req.query.userId || 'guest';
+  return req.headers['x-user-id'] || req.body.userId || req.query.userId;
 }
 
 // CORS Configuration
@@ -54,11 +53,16 @@ function setupMiddleware(res) {
 
 // Error handler
 function handleError(res, error) {
-  console.error('API Error:', error);
+  console.error('API Error:', {
+    message: error.message,
+    stack: error.stack,
+    name: error.name
+  });
   const status = error.status || 500;
   res.status(status).json({ 
     error: error.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+    type: error.name,
+    ...(process.env.NODE_ENV !== 'production' && { stack: error.stack })
   });
 }
 

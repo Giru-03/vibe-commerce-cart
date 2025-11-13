@@ -21,9 +21,8 @@ async function connectToDatabase() {
   await mongoose.connect(uri);
 }
 
-// Helper to get userId from header, body, or query. Defaults to 'guest'.
 function resolveUserId(req) {
-  return req.headers['x-user-id'] || req.body.userId || req.query.userId || 'guest';
+  return req.headers['x-user-id'] || req.body.userId || req.query.userId;
 }
 
 // CORS Configuration

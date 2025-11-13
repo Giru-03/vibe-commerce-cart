@@ -43,6 +43,10 @@ module.exports = async (req, res) => {
     await connectToDatabase();
     
     const userId = resolveUserId(req);
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required. Please set x-user-id header.' });
+    }
 
     if (req.method === 'GET') {
       // Get cart

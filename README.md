@@ -134,7 +134,7 @@ Most endpoints require a user identifier sent via header:
 ```
 x-user-id: user@example.com
 ```
-Defaults to `guest@example.com` if not provided.
+
 
 ### Endpoints
 
@@ -245,7 +245,6 @@ npm run seed
 - `PORT`: Server port (defaults to 5000)
 
 ### User Management
-- Default user: `guest@example.com`
 - Users are fetched from database for the switcher
 - Cart data persists per user
 

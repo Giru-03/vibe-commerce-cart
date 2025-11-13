@@ -6,7 +6,7 @@ const cartItemSchema = new mongoose.Schema({
 });
 
 const cartSchema = new mongoose.Schema({
-  userId: { type: String, default: 'guest' }, // Mock user
+  userId: { type: String }, // Mock user
   items: [cartItemSchema],
   total: { type: Number, default: 0 }
 });

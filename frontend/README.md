@@ -8,7 +8,6 @@ The application uses environment variables for backend API configuration. Create
 
 ```
 VITE_API_BASE_URL=http://localhost:3000/api
-VITE_DEFAULT_USER_ID=guest@example.com
 ```
 
 Copy `.env.example` to `.env` and modify the values as needed.

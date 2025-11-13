@@ -7,14 +7,16 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import { FiShoppingCart } from 'react-icons/fi';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
-const DEFAULT_USER_ID = import.meta.env.VITE_DEFAULT_USER_ID || 'guest@example.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL
 });
 
-// Set default user header
-api.defaults.headers.common['x-user-id'] = DEFAULT_USER_ID;
+// Set user header from localStorage (set by UserSwitcher)
+const storedUser = localStorage.getItem('vibe_user');
+if (storedUser) {
+  api.defaults.headers.common['x-user-id'] = storedUser;
+}
 
 function LazyProductCard({ product, onAdd }) {
   const [isVisible, setIsVisible] = useState(false);
